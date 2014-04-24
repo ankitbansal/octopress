@@ -1,0 +1,204 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>Getting DB Connection Pool Right - My Blog</title>
+  <meta name="author" content="Ankit Bansal">
+
+  
+  <meta name="description" content="Recently during performance testing, we found that our database connection pool size was way too high which resulted in bad performance of the system &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://www.ankitbansal.net/blog/2013/06/12/getting-db-connection-pool-right">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="My Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="./javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">My Blog</a></h1>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="q" value="site:www.ankitbansal.net" />
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">Getting DB Connection Pool Right</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-12T22:23:00+05:30" pubdate data-updated="true">Jun 12<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><p>Recently during performance testing, we found that our database connection pool size was way too high which resulted in bad performance of the system as we increased the load. This was due to not giving enough thought while increasing the connection pool a couple of months back when we faced a latency issue. So, the question was what should be the optimum value for connection pool size and how should we determine it. We were using Oracle as the database for our project.</p>
+
+<p>To calculate the required connection pool size, we first established the most frequent request and the time  spent in the db on average in order to process that request. This turned out to be the creation/update of an order record.
+On the basis of our usage model we expect 2500 users to be ordering concurrently and overall 300 orders to be requested per second. Looking at the server logs it takes around 250ms on average to fulfil an order request, out of which 100ms is spent in the db. So, for 300 requests to be processed within a second, we would need 30 connections on average. Similarly we identified the other most frequent requests and were able to calculate the average and maximum concurrent number of connections required.</p>
+
+<p>One of the things worth mentioning is that we are not using any database level cache in our system. If we were then we would have to take this into account when calculating the number of actual database hits.</p>
+
+<p>The results with the new connection pool size were good &ndash; the latency in responding to requests was significantly reduced compared to when we had the very large connection pool. We also had a chat with the DBA who confirmed that the number of active connections was in the same ballpark as we had calculated. It would have been really useful for the development team to be able to monitor the number of active connections directly, but lack of access rights meant this wasn&rsquo;t possible.</p>
+
+<p>Getting the connection pool size right not only improved the request latency, but also addressed some other issues we were experiencing. Attempting to run with too many connections was leading to some serious paging issues with the buffer cache.</p>
+
+<p>In conclusion, choosing the right connection pool size is an important task in performance tuning an application, and accepting the defaults can result in serious degradation.</p>
+
+<p>It would be good to hear other people&rsquo;s experiences with setting connection pool sizes, what approaches have worked well and what to avoid.</p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">Ankit Bansal</span></span>
+
+      
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-06-12T22:23:00+05:30" pubdate data-updated="true">Jun 12<span>th</span>, 2013</time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://www.ankitbansal.net/blog/2013/06/12/getting-db-connection-pool-right/" data-via="" data-counturl="http://www.ankitbansal.net/blog/2013/06/12/getting-db-connection-pool-right/" >Tweet</a>
+  
+  
+  
+</div>
+
+    
+    <p class="meta">
+      
+      
+    </p>
+  </footer>
+</article>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2013/06/12/getting-db-connection-pool-right/">Getting DB Connection Pool Right</a>
+      </li>
+    
+  </ul>
+</section>
+
+
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+  Copyright &copy; 2014 - Ankit Bansal -
+  <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>
