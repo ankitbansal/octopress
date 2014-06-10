@@ -9,7 +9,7 @@
   <meta name="author" content="Ankit Bansal">
 
   
-  <meta name="description" content="Recently during performance testing, we found that our database connection pool size was way too high which resulted in bad performance of the system &hellip;">
+  <meta name="description" content="Many developers find it difficult to understand &lsquo;this&rsquo; keyword in javascript. This is more often with developers coming from java &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -69,7 +69,190 @@
       
   <header>
     
-      <h1 class="entry-title"><a href="/blog/2013/06/12/getting-db-connection-pool-right/">Getting DB Connection Pool Right</a></h1>
+      <h1 class="entry-title"><a href="/blog/2013/11/08/understanding-this-keyword-in-javascript/">Understanding &#8216;this&#8217; keyword in Javascript</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+
+
+
+
+  
+
+
+<time datetime="2013-11-08T19:35:59+05:30" pubdate data-updated="true">Nov 8<span>th</span>, 2013</time>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>Many developers find it difficult to understand &lsquo;this&rsquo; keyword in javascript. This is more often with developers coming from java background as the way &lsquo;this&rsquo; works in java is quiet different from that in javascript. While in java, &lsquo;this&rsquo; refers to the object whose method is being called. In javascript, &lsquo;this&rsquo; refers to the object in whose context method is invoked also called ‘current execution context’. In this article, I will try to clear up some of the confusions by going through various examples. Before we dive into how &lsquo;this&rsquo; is determined, let&rsquo;s understand what is execution context.</p>
+
+<h3>Execution Context:</h3>
+
+<p>When a javascript code run, the environment in which it is evaluated is called execution context.
+All javascript code is guaranteed to run in the execution context. By default, execution context
+is global.</p>
+
+<p>When a javascript function is called, a new execution context is created and is pushed
+to the top of the execution stack. If you call another function inside this current function, it
+will create a new execution context and  push it to the top of execution stack. Once the
+function completes execution, its execution context is popped off making new execution
+context to the context below it.</p>
+
+<p>The thing to understand is, every time execution context is changed, &lsquo;this&rsquo; gets reassigned to the object in whose
+execution context is invoked.</p>
+
+<p>Without further delay, let’s go through some of the examples to make it clear:</p>
+
+<h3>Global Context</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">function</span> <span class="nx">hello</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">this</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">hello</span><span class="p">();</span> <span class="c1">// this points to window</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">someRef</span> <span class="o">=</span> <span class="nx">hello</span><span class="p">;</span>
+</span><span class='line'><span class="nx">someRef</span><span class="p">();</span> <span class="c1">// this points to window</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>&lsquo;hello&rsquo; method over here is not associated with any object. So, it runs in global execution context. Thus, &lsquo;this&rsquo; over here points to &lsquo;window&rsquo; which is the default global object in the case of browser.
+The same goes true for method &lsquo;someRef&rsquo;.</p>
+
+<h3>Object Context</h3>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>   <span class="nx">bar</span><span class="o">:</span> <span class="nx">hello</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span><span class="p">();</span> <span class="c1">//this points to foo</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this example, we have created an object called foo and calling method of bar which refers to our previously defined hello method. Since, bar method is the current execution context, &lsquo;this&rsquo; refers to its object which is foo.</p>
+
+<p>Another way to define an object is via constructor:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">baz</span> <span class="o">=</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">this</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="nx">hello</span><span class="p">;</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">someRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">baz</span><span class="p">();</span>
+</span><span class='line'><span class="nx">someRef</span><span class="p">.</span><span class="nx">bar</span><span class="p">();</span> <span class="c1">//this points to baz</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>As you might have guessed, &lsquo;this&rsquo; over here will refer to baz object.</p>
+
+<p>How about if we add a prototype method:</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="nx">baz</span><span class="p">.</span><span class="nx">prototype</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">barPrototype</span><span class="o">:</span> <span class="nx">hello</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'>
+</span><span class='line'><span class="kd">var</span> <span class="nx">someRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">baz</span><span class="p">();</span>
+</span><span class='line'><span class="nx">someRef</span><span class="p">.</span><span class="nx">barPrototype</span><span class="p">();</span> <span class="c1">// this refers to baz object</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Again, over here this will refer to baz object.</p>
+
+<h3>Explicitly Setting Context</h3>
+
+<p>The next set is of functions allows you to change the context of a function which in effect results in changing of &lsquo;this value. These methods are Call, Apply and Bind Methods.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="c1">//apply</span>
+</span><span class='line'><span class="nx">hello</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span> <span class="c1">//this points to foo</span>
+</span><span class='line'><span class="c1">//call</span>
+</span><span class='line'><span class="nx">hello</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span> <span class="c1">//this points to foo</span>
+</span><span class='line'><span class="c1">//bind</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">someRef</span> <span class="o">=</span> <span class="nx">hello</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span><span class='line'><span class="nx">someRef</span><span class="p">();</span> <span class="c1">//this points to foo</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>Call and apply immediately invokes the function. While bind allow you to set the function context that can be invoked at later point of time.</p>
+
+<h3>eval</h3>
+
+<p>The eval function provides capability of dynamic execution of JavaScript code represented as a string.</p>
+
+<figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nx">bar</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span><span class='line'>  <span class="nb">eval</span><span class="p">(</span><span class="err">“</span><span class="nx">hello</span><span class="p">()</span><span class="err">”</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="p">}</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span><span class="p">();</span> <span class="c1">//this points to global object</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>In this case, this will refer to Window. Let’s see why. When we invoke bar &lsquo;this&rsquo; was called with foo,
+but inside bar function, eval invokes hello without referring an object, so it goes through global scope.</p>
+
+<h3>Conclusion</h3>
+
+<p>&lsquo;this&rsquo; is very powerful in javascript and many libraries utilize it at its core. I hope this blog have helped you in clearing some of the doubts and gaining a better understanding of how &lsquo;this&rsquo; evaluates in javascript.</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2013/06/12/getting-db-connection-pool-right/">Getting DB connection pool right</a></h1>
     
     
       <p class="meta">
@@ -126,7 +309,11 @@ On the basis of our usage model we expect 2500 users to be ordering concurrently
   <ul id="recent_posts">
     
       <li class="post">
-        <a href="/blog/2013/06/12/getting-db-connection-pool-right/">Getting DB Connection Pool Right</a>
+        <a href="/blog/2013/11/08/understanding-this-keyword-in-javascript/">Understanding &#8216;this&#8217; keyword in Javascript</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2013/06/12/getting-db-connection-pool-right/">Getting DB connection pool right</a>
       </li>
     
   </ul>
