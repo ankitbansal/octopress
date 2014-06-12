@@ -4,6 +4,9 @@ title: "Understanding 'this' keyword in Javascript"
 date: 2013-11-08 19:35:59 +0530
 comments: true
 categories:
+
+keywords: "javascript, this keyword, eval, execution context"
+description: "Understanding this keyword in javascript"
 ---
 
 Many developers find it difficult to understand 'this' keyword in javascript. This is more often with developers coming from java background as the way 'this' works in java is quiet different from that in javascript. While in java, 'this' refers to the object whose method is being called. In javascript, 'this' refers to the object in whose context method is invoked also called ‘current execution context’. In this article, I will try to clear up some of the confusions by going through various examples. Before we dive into how 'this' is determined, let's understand what is execution context.

@@ -4,6 +4,9 @@ title: "Getting DB connection pool right"
 date: 2013-06-12 22:23
 comments: true
 categories:  
+
+keywords: "db, connection pool, performance"
+description: "Provides information on how to calculate db connection pool size"
 ---
 Recently during performance testing, we found that our database connection pool size was way too high which resulted in bad performance of the system as we increased the load. This was due to not giving enough thought while increasing the connection pool a couple of months back when we faced a latency issue. So, the question was what should be the optimum value for connection pool size and how should we determine it. We were using Oracle as the database for our project.
 
