@@ -4,7 +4,7 @@
   <title><![CDATA[Ankit Bansal Blog]]></title>
   <link href="http://www.ankitbansal.net/atom.xml" rel="self"/>
   <link href="http://www.ankitbansal.net/"/>
-  <updated>2014-06-12T10:37:03+05:30</updated>
+  <updated>2014-06-12T18:19:39+05:30</updated>
   <id>http://www.ankitbansal.net/</id>
   <author>
     <name><![CDATA[Ankit Bansal]]></name>
@@ -14,28 +14,28 @@
 
   
   <entry>
-    <title type="html"><![CDATA[Understanding 'this' keyword in Javascript]]></title>
+    <title type="html"><![CDATA[Understanding this keyword in Javascript]]></title>
     <link href="http://www.ankitbansal.net/blog/2013/11/08/understanding-this-keyword-in-javascript/"/>
     <updated>2013-11-08T19:35:59+05:30</updated>
     <id>http://www.ankitbansal.net/blog/2013/11/08/understanding-this-keyword-in-javascript</id>
-    <content type="html"><![CDATA[<p>Many developers find it difficult to understand &lsquo;this&rsquo; keyword in javascript. This is more often with developers coming from java background as the way &lsquo;this&rsquo; works in java is quiet different from that in javascript. While in java, &lsquo;this&rsquo; refers to the object whose method is being called. In javascript, &lsquo;this&rsquo; refers to the object in whose context method is invoked also called ‘current execution context’. In this article, I will try to clear up some of the confusions by going through various examples. Before we dive into how &lsquo;this&rsquo; is determined, let&rsquo;s understand what is execution context.</p>
+    <content type="html"><![CDATA[<p>Many developers find it difficult to understand <em>this</em> keyword in javascript. Its more often with developers coming from java background as the way <em>this</em> works in java is quiet different from that in javascript. While in java, <em>this</em> refers to the object whose method is being called. In javascript, <em>this</em> refers to the object in whose context method is invoked also called ‘current execution context’. In this article, I will try to clear up some of the confusions by going through various examples. Before we dive into how <em>this</em> is determined, let&rsquo;s understand what is execution context.</p>
 
 <h3>Execution Context:</h3>
 
 <p>When a javascript code run, the environment in which it is evaluated is called execution context.
-All javascript code is guaranteed to run in the execution context. By default, execution context
+All javascript code is guaranteed to run in some execution context. By default, execution context
 is global.</p>
 
 <p>When a javascript function is called, a new execution context is created and is pushed
-to the top of the execution stack. If you call another function inside this current function, it
+to the top of the execution stack. If another function is called inside current function, it
 will create a new execution context and  push it to the top of execution stack. Once the
 function completes execution, its execution context is popped off making new execution
 context to the context below it.</p>
 
-<p>The thing to understand is, every time execution context is changed, &lsquo;this&rsquo; gets reassigned to the object in whose
+<p>The thing to understand is, every time execution context is changed, <em>this</em> gets reassigned to the object in whose
 execution context is invoked.</p>
 
-<p>Without further delay, let’s go through some of the examples to make it clear:</p>
+<p>Let’s go through some of the examples to make it clear:</p>
 
 <h3>Global Context</h3>
 
@@ -58,7 +58,7 @@ execution context is invoked.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>&lsquo;hello&rsquo; method over here is not associated with any object. So, it runs in global execution context. Thus, &lsquo;this&rsquo; over here points to &lsquo;window&rsquo; which is the default global object in the case of browser.
+<p>&lsquo;hello&rsquo; method over here is not associated with any object. So, it runs in global execution context. Thus, <em>this</em> over here points to &lsquo;window&rsquo; which is the default global object in the case of browser.
 The same goes true for method &lsquo;someRef&rsquo;.</p>
 
 <h3>Object Context</h3>
@@ -76,7 +76,7 @@ The same goes true for method &lsquo;someRef&rsquo;.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In this example, we have created an object called foo and calling method of bar which refers to our previously defined hello method. Since, bar method is the current execution context, &lsquo;this&rsquo; refers to its object which is foo.</p>
+<p>In this example, we have created an object called foo and calling method of bar which refers to our previously defined hello method. Since, bar method is the current execution context, <em>this</em> refers to its object which is foo.</p>
 
 <p>Another way to define an object is via constructor:</p>
 
@@ -95,7 +95,7 @@ The same goes true for method &lsquo;someRef&rsquo;.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>As you might have guessed, &lsquo;this&rsquo; over here will refer to baz object.</p>
+<p>As you might have guessed, <em>this</em> over here will refer to baz object.</p>
 
 <p>How about if we add a prototype method:</p>
 
@@ -114,11 +114,11 @@ The same goes true for method &lsquo;someRef&rsquo;.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>Again, over here this will refer to baz object.</p>
+<p>Again, over here <em>this</em> will refer to baz object.</p>
 
 <h3>Explicitly Setting Context</h3>
 
-<p>The next set is of functions allows you to change the context of a function which in effect results in changing of &lsquo;this value. These methods are Call, Apply and Bind Methods.</p>
+<p>The next set is of functions allows you to change the context of a function which in effect results in changing of <em>this</em> value. These methods are Call, Apply and Bind Methods.</p>
 
 <figure class='code'><figcaption><span></span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
 <span class='line-number'>2</span>
@@ -160,12 +160,12 @@ The same goes true for method &lsquo;someRef&rsquo;.</p>
 </span></code></pre></td></tr></table></div></figure>
 
 
-<p>In this case, this will refer to Window. Let’s see why. When we invoke bar &lsquo;this&rsquo; was called with foo,
+<p>In this case, <em>this</em> will refer to Window. Let’s see why. When we invoke bar <em>this</em> was called with foo,
 but inside bar function, eval invokes hello without referring an object, so it goes through global scope.</p>
 
 <h3>Conclusion</h3>
 
-<p>&lsquo;this&rsquo; is very powerful in javascript and many libraries utilize it at its core. I hope this blog have helped you in clearing some of the doubts and gaining a better understanding of how &lsquo;this&rsquo; evaluates in javascript.</p>
+<p><em>this</em> is very powerful in javascript and many libraries utilize it at its core. I hope this blog have helped you in clearing some of the doubts and gaining a better understanding of how <em>this</em> evaluates in javascript.</p>
 ]]></content>
   </entry>
   
