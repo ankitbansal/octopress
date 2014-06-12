@@ -11,7 +11,7 @@ description: "Understanding this keyword in javascript"
 
 Many developers find it difficult to understand *this* keyword in javascript. Its more often with developers coming from java background as the way *this* works in java is quiet different from that in javascript. While in java, *this* refers to the object whose method is being called. In javascript, *this* refers to the object in whose context method is invoked also called ‘current execution context’. In this article, I will try to clear up some of the confusions by going through various examples. Before we dive into how *this* is determined, let's understand what is execution context.
 
-### Execution Context: ###
+### What is Execution Context: ###
 When a javascript code run, the environment in which it is evaluated is called execution context.
 All javascript code is guaranteed to run in some execution context. By default, execution context
 is global.
@@ -25,9 +25,9 @@ context to the context below it.
 The thing to understand is, every time execution context is changed, *this* gets reassigned to the object in whose
 execution context is invoked.
 
-Let’s go through some of the examples to make it clear:
+Let’s go through some of the function invocations and figure out what this will resolve to:
 
-### Global Context ###
+### Global Inovcation ###
 ``` javascript
 function hello() {
 	console.log(this);
@@ -41,7 +41,7 @@ someRef(); // this points to window
 'hello' method over here is not associated with any object. So, it runs in global execution context. Thus, *this* over here points to 'window' which is the default global object in the case of browser.
 The same goes true for method 'someRef'.
 
-### Object Context ###
+### Object Invocation ###
 ``` javascript
 var foo = {
    bar: hello
@@ -73,9 +73,9 @@ someRef.barPrototype(); // this refers to baz object
 ```
 Again, over here *this* will refer to baz object.
 
-### Explicitly Setting Context ###
+### Invocation using apply, call and bind ###
 
-The next set is of functions allows you to change the context of a function which in effect results in changing of *this* value. These methods are Call, Apply and Bind Methods.
+The next set is of functions allows you to explicitly specify *this* value. These methods are Call, Apply and Bind Methods.
 ```
 var foo = {};
 //apply
@@ -89,7 +89,7 @@ someRef(); //this points to foo
 
 Call and apply immediately invokes the function. While bind allow you to set the function context that can be invoked at later point of time.
 
-### eval ###
+### Invocation using eval ###
 The eval function provides capability of dynamic execution of JavaScript code represented as a string.
 ```
 var foo = {
